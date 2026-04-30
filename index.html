@@ -238,6 +238,19 @@
         pointer-events: none !important;
         user-select: none;
       }
+      #toast {
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        transform: translate(-50%, 8px);
+      }
+      #toast.toast-show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        pointer-events: auto;
+      }
+      .img-tap {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
     </style>
   </head>
   <body class="antialiased">
@@ -327,7 +340,7 @@
             </button>
           </div>
         </header>
-        <div class="flex-1 overflow-y-auto safe-pad pt-1 pb-4 min-h-0">
+        <div id="journalScroll" class="flex-1 overflow-y-auto safe-pad pt-1 pb-4 min-h-0">
           <ul id="entryList" class="space-y-3" aria-label="日记列表"></ul>
           <div id="emptyHint" class="hidden text-center th-muted text-sm mt-16 px-6">
             还没有日记，点右下角按钮开始记录。
@@ -442,6 +455,21 @@
             <p class="text-[17px] font-medium th-text mt-0.5">Littlethings</p>
             <p class="text-[13px] th-muted2 mt-1">数据仅保存在本设备</p>
           </div>
+          <button
+            type="button"
+            id="btnExportEntries"
+            class="w-full text-left px-4 py-3.5 text-[17px] th-text th-row-active transition-colors"
+          >
+            导出日记备份（JSON）…
+          </button>
+          <input type="file" id="importEntriesInput" accept="application/json,.json" class="hidden" />
+          <button
+            type="button"
+            id="btnImportEntries"
+            class="w-full text-left px-4 py-3.5 text-[17px] th-text th-row-active transition-colors"
+          >
+            从 JSON 合并导入…
+          </button>
           <button
             type="button"
             id="btnPinEnable"
@@ -592,7 +620,10 @@
                   id="composeImagePreview"
                   src=""
                   alt="日记配图预览"
-                  class="max-h-48 w-auto max-w-full rounded-xl object-contain ring-1 th-input"
+                  class="img-tap max-h-48 w-auto max-w-full rounded-xl object-contain ring-1 th-input"
+                  role="button"
+                  tabindex="0"
+                  title="点击查看大图"
                 />
                 <button
                   type="button"
@@ -648,11 +679,39 @@
           </button>
         </div>
       </div>
+
+      <div
+        id="toast"
+        class="fixed left-1/2 z-[92] max-w-[min(90vw,22rem)] rounded-2xl px-4 py-2.5 text-center text-[15px] font-medium th-text th-card shadow-lg opacity-0 pointer-events-none"
+        style="bottom: calc(5.25rem + env(safe-area-inset-bottom))"
+        role="status"
+        aria-live="polite"
+      ></div>
+
+      <div
+        id="imageLightbox"
+        class="fixed inset-0 z-[95] hidden flex flex-col items-center justify-center bg-black/88 p-4 safe-pad"
+        role="dialog"
+        aria-modal="true"
+        aria-label="图片预览"
+      >
+        <button
+          type="button"
+          id="lightboxClose"
+          class="absolute right-4 z-10 rounded-full p-2 text-2xl leading-none text-white/90 active:bg-white/10"
+          style="top: max(0.75rem, env(safe-area-inset-top))"
+          aria-label="关闭预览"
+        >
+          ×
+        </button>
+        <img id="lightboxImg" class="max-h-[85dvh] max-w-full object-contain rounded-lg" alt="" />
+      </div>
     </div>
 
     <script>
       (function () {
         const STORAGE_KEY = 'littlethings_entries';
+        const DRAFT_SESSION_KEY = 'littlethings_compose_draft';
         const STORAGE_PIN_HASH = 'littlethings_pin_hash';
         const STORAGE_PIN_SALT = 'littlethings_pin_salt';
         const MOODS = ['😊', '😢', '😌', '😤', '🥰', '😴', '🤔', '✨', '💪', '📝', '😮', '🫶'];
@@ -1686,6 +1745,159 @@
           else composeImagePreview.removeAttribute('src');
         }
 
+        var draftSaveTimer = null;
+        var toastHideTimer = null;
+        var lastJournalTabTap = 0;
+
+        function scheduleDraftSave() {
+          if (viewCompose.classList.contains('hidden')) return;
+          clearTimeout(draftSaveTimer);
+          draftSaveTimer = setTimeout(persistComposeDraft, 450);
+        }
+
+        function persistComposeDraft() {
+          if (viewCompose.classList.contains('hidden')) return;
+          var title = titleField.value.trim();
+          var body = bodyField.value;
+          var mood = (selectedMood || '').trim();
+          var img = draftImageData || '';
+          if (!title && !body.trim() && !mood && !img) {
+            try {
+              sessionStorage.removeItem(DRAFT_SESSION_KEY);
+            } catch (e) {}
+            return;
+          }
+          try {
+            sessionStorage.setItem(
+              DRAFT_SESSION_KEY,
+              JSON.stringify({
+                editingId: editingId,
+                title: titleField.value,
+                body: bodyField.value,
+                mood: selectedMood || '',
+                imageData: draftImageData || '',
+                ts: Date.now(),
+              })
+            );
+          } catch (e) {}
+        }
+
+        function clearComposeDraft() {
+          try {
+            sessionStorage.removeItem(DRAFT_SESSION_KEY);
+          } catch (e) {}
+        }
+
+        function maybeRestoreDraft(forId) {
+          try {
+            var raw = sessionStorage.getItem(DRAFT_SESSION_KEY);
+            if (!raw) return;
+            var d = JSON.parse(raw);
+            var want = forId || null;
+            var draftId = d.editingId != null ? d.editingId : null;
+            if (want !== draftId) return;
+            var has =
+              (d.title || '').trim() ||
+              (d.body || '').trim() ||
+              (d.mood || '').trim() ||
+              (d.imageData || '').trim();
+            if (!has) return;
+            if (!confirm('检测到上次未保存的内容，是否恢复到编辑框？')) {
+              clearComposeDraft();
+              return;
+            }
+            titleField.value = d.title || '';
+            bodyField.value = d.body || '';
+            selectedMood = (d.mood || '').trim();
+            draftImageData = sanitizeImageData(d.imageData || '');
+            imageFileInput.value = '';
+            syncComposeImageUi();
+            clearComposeDraft();
+          } catch (e) {
+            clearComposeDraft();
+          }
+        }
+
+        function showToast(msg, ms) {
+          var el = document.getElementById('toast');
+          if (!el) return;
+          ms = ms || 2200;
+          el.textContent = msg;
+          el.classList.add('toast-show');
+          clearTimeout(toastHideTimer);
+          toastHideTimer = setTimeout(function () {
+            el.classList.remove('toast-show');
+          }, ms);
+        }
+
+        function showImageLightbox(src) {
+          if (!src || typeof src !== 'string' || !src.startsWith('data:image/')) return;
+          var box = document.getElementById('imageLightbox');
+          var img = document.getElementById('lightboxImg');
+          if (!box || !img) return;
+          img.src = src;
+          box.classList.remove('hidden');
+        }
+
+        function hideImageLightbox() {
+          var box = document.getElementById('imageLightbox');
+          var img = document.getElementById('lightboxImg');
+          if (box) box.classList.add('hidden');
+          if (img) img.removeAttribute('src');
+        }
+
+        function exportEntriesJson() {
+          var data = JSON.stringify(loadEntries(), null, 2);
+          var blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'littlethings-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          showToast('已导出备份文件');
+        }
+
+        function normalizeImportedEntry(e) {
+          if (!e || typeof e.id !== 'string') return null;
+          return {
+            id: e.id,
+            title: typeof e.title === 'string' ? e.title : '',
+            body: typeof e.body === 'string' ? e.body : '',
+            mood: typeof e.mood === 'string' ? e.mood : '',
+            imageData: sanitizeImageData(e.imageData),
+            createdAt: typeof e.createdAt === 'string' ? e.createdAt : new Date().toISOString(),
+            updatedAt: typeof e.updatedAt === 'string' ? e.updatedAt : new Date().toISOString(),
+          };
+        }
+
+        function mergeImportedEntries(arr) {
+          if (!Array.isArray(arr)) throw new Error('文件格式应为日记数组');
+          var map = {};
+          loadEntries().forEach(function (e) {
+            map[e.id] = e;
+          });
+          var n = 0;
+          arr.forEach(function (raw) {
+            var e = normalizeImportedEntry(raw);
+            if (e) {
+              map[e.id] = e;
+              n++;
+            }
+          });
+          try {
+            saveEntries(
+              Object.keys(map).map(function (k) {
+                return map[k];
+              })
+            );
+          } catch (err) {
+            throw new Error('存储空间不足，导入未完成');
+          }
+          return n;
+        }
+
         function previewText(body, max) {
           const t = (body || '').replace(/\s+/g, ' ').trim();
           if (!t) return '无正文';
@@ -1862,6 +2074,7 @@
             return x.id !== id;
           });
           saveEntries(entries);
+          showToast('已删除');
           renderList();
           renderStats();
           closeActionSheet();
@@ -1948,9 +2161,14 @@
               if (th) {
                 var lim = document.createElement('img');
                 lim.src = e.imageData;
-                lim.alt = '';
-                lim.className = 'h-full w-full object-cover';
+                lim.alt = '配图';
+                lim.className = 'img-tap h-full w-full object-cover';
                 lim.loading = 'lazy';
+                lim.addEventListener('click', function (ev) {
+                  ev.stopPropagation();
+                  ev.preventDefault();
+                  showImageLightbox(e.imageData);
+                });
                 th.appendChild(lim);
               }
             }
@@ -2091,6 +2309,7 @@
             composeMetaTime.textContent = '创建于 · ' + formatComposeTime(now);
             composeTimeLabel.textContent = formatComposeTime(now);
           }
+          maybeRestoreDraft(id || null);
           buildMoodPicker();
           syncMoodChips();
           viewCompose.classList.remove('hidden');
@@ -2102,7 +2321,8 @@
           });
         }
 
-        function closeCompose() {
+        function closeCompose(skipDraftPersist) {
+          if (!skipDraftPersist) persistComposeDraft();
           viewCompose.classList.add('hidden');
           viewCompose.classList.remove('compose-vv');
           viewCompose.style.removeProperty('--vv-top');
@@ -2133,7 +2353,9 @@
                 return;
               }
             }
-            closeCompose();
+            clearComposeDraft();
+            closeCompose(true);
+            showToast('已删除');
             renderList();
             renderStats();
             return;
@@ -2144,7 +2366,7 @@
               return x.id === editingId;
             });
             if (idx === -1) {
-              closeCompose();
+              closeCompose(true);
               return;
             }
             entries[idx] = {
@@ -2171,7 +2393,9 @@
           } catch (err) {
             return;
           }
-          closeCompose();
+          clearComposeDraft();
+          closeCompose(true);
+          showToast('已保存');
           renderList();
           renderStats();
         }
@@ -2203,6 +2427,19 @@
         tabBtns.forEach(function (btn) {
           btn.addEventListener('click', function () {
             const t = btn.getAttribute('data-tab');
+            if (t === 'journal') {
+              var now = Date.now();
+              if (
+                lastJournalTabTap &&
+                now - lastJournalTabTap < 380 &&
+                !document.getElementById('tabJournal').classList.contains('hidden')
+              ) {
+                var js = document.getElementById('journalScroll');
+                if (js) js.scrollTo({ top: 0, behavior: 'smooth' });
+                showToast('已回到顶部', 1600);
+              }
+              lastJournalTabTap = now;
+            }
             if (t) setTab(t);
           });
         });
@@ -2230,8 +2467,68 @@
           closeAllSwipes();
           openCompose(null);
         });
-        document.getElementById('btnCloseCompose').addEventListener('click', closeCompose);
+        document.getElementById('btnCloseCompose').addEventListener('click', function () {
+          closeCompose();
+        });
         document.getElementById('btnSaveCompose').addEventListener('click', saveCompose);
+
+        viewCompose.addEventListener('input', scheduleDraftSave);
+        moodPicker.addEventListener('click', scheduleDraftSave);
+
+        composeImagePreview.addEventListener('click', function () {
+          if (draftImageData) showImageLightbox(draftImageData);
+        });
+        composeImagePreview.addEventListener('keydown', function (ev) {
+          if ((ev.key === 'Enter' || ev.key === ' ') && draftImageData) {
+            ev.preventDefault();
+            showImageLightbox(draftImageData);
+          }
+        });
+
+        document.getElementById('lightboxClose').addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          hideImageLightbox();
+        });
+        document.getElementById('imageLightbox').addEventListener('click', function (ev) {
+          if (ev.target === ev.currentTarget) hideImageLightbox();
+        });
+
+        document.getElementById('btnExportEntries').addEventListener('click', exportEntriesJson);
+        document.getElementById('btnImportEntries').addEventListener('click', function () {
+          document.getElementById('importEntriesInput').click();
+        });
+        document.getElementById('importEntriesInput').addEventListener('change', function () {
+          var inp = document.getElementById('importEntriesInput');
+          var f = inp.files && inp.files[0];
+          if (!f) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            try {
+              var arr = JSON.parse(String(reader.result || '[]'));
+              if (
+                !confirm(
+                  '将把文件中的日记按「ID」合并到本地：相同 ID 的日记会被覆盖。不含有效 ID 的项会跳过。确定导入？'
+                )
+              ) {
+                inp.value = '';
+                return;
+              }
+              var n = mergeImportedEntries(arr);
+              inp.value = '';
+              showToast('已合并 ' + n + ' 条');
+              renderList();
+              renderStats();
+            } catch (err) {
+              alert('导入失败：' + (err.message || '请检查 JSON 格式'));
+              inp.value = '';
+            }
+          };
+          reader.onerror = function () {
+            alert('读取文件失败');
+            inp.value = '';
+          };
+          reader.readAsText(f, 'utf-8');
+        });
 
         btnPickImage.addEventListener('click', function () {
           imageFileInput.click();
@@ -2245,6 +2542,7 @@
               draftImageData = dataUrl;
               syncComposeImageUi();
               imageFileInput.value = '';
+              scheduleDraftSave();
             },
             function (err) {
               alert(err);
@@ -2256,6 +2554,7 @@
           draftImageData = '';
           imageFileInput.value = '';
           syncComposeImageUi();
+          scheduleDraftSave();
         });
 
         btnPinEnable.addEventListener('click', function () {

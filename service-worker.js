@@ -1,5 +1,5 @@
 /* Littlethings — basic offline shell for PWA */
-const CACHE_NAME = 'littlethings-v4';
+const CACHE_NAME = 'littlethings-v5';
 const CORE_ASSETS = [
   './index.html',
   './manifest.json',
