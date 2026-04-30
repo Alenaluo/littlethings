@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta id="metaThemeColor" name="theme-color" content="#F2F2F7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Littlethings" />
+    <meta name="description" content="Littlethings — 极简个人日记" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+    <title>Littlethings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              iosbg: '#F2F2F7',
+              tabbar: 'rgba(248, 248, 248, 0.94)',
+            },
+            borderRadius: {
+              card: '16px',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --ui-font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        --title-font: inherit;
+        --c-bg: #f2f2f7;
+        --c-card: #ffffff;
+        --c-text: #111827;
+        --c-muted: #6b7280;
+        --c-muted2: #9ca3af;
+        --c-accent: #2563eb;
+        --c-ring: rgba(0, 0, 0, 0.08);
+        --c-input: #ffffff;
+        --c-tabbar: rgba(248, 248, 248, 0.94);
+        --c-tabbar-br: rgba(0, 0, 0, 0.1);
+        --c-compose-bar: #f2f2f7;
+        --c-card-active: rgba(0, 0, 0, 0.05);
+        --c-danger: #dc2626;
+        --c-keypad-bg: #ffffff;
+        --c-keypad-text: #111827;
+        --c-keypad-ring: rgba(0, 0, 0, 0.1);
+        --c-sheet: #ffffff;
+        --c-pill: #f3f4f6;
+        --c-hero-tint: rgba(242, 242, 247, 0.35);
+      }
+      html {
+        height: 100%;
+        height: -webkit-fill-available;
+      }
+      html,
+      body {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      body {
+        min-height: 100%;
+        min-height: 100dvh;
+        min-height: -webkit-fill-available;
+        font-family: var(--ui-font, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica,
+          Arial, sans-serif);
+        background-color: var(--c-bg);
+        color: var(--c-text);
+      }
+      .th-bg {
+        background-color: var(--c-bg);
+      }
+      .th-text {
+        color: var(--c-text);
+      }
+      .th-muted {
+        color: var(--c-muted);
+      }
+      .th-muted2 {
+        color: var(--c-muted2);
+      }
+      .th-card {
+        background-color: var(--c-card);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        border: 1px solid var(--c-ring);
+      }
+      .th-card-flat {
+        background-color: var(--c-card);
+      }
+      .th-input {
+        background-color: var(--c-input);
+        color: var(--c-text);
+        border: 1px solid var(--c-ring);
+      }
+      .th-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+      }
+      html[data-theme='dark'] .th-input:focus {
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45);
+      }
+      .th-tabbar {
+        background-color: var(--c-tabbar);
+        border-top-color: var(--c-tabbar-br);
+      }
+      .th-compose-bar {
+        background-color: var(--c-compose-bar);
+        border-bottom: 1px solid var(--c-ring);
+      }
+      .tab-btn.tab-active {
+        color: var(--c-accent);
+      }
+      .tab-btn.tab-inactive {
+        color: var(--c-muted);
+      }
+      .th-accent {
+        color: var(--c-accent);
+      }
+      .th-accent-fill {
+        background-color: var(--c-accent);
+        color: #fff;
+      }
+      .th-pill {
+        background-color: var(--c-pill);
+        color: var(--c-text);
+      }
+      .th-pill-sub {
+        color: var(--c-muted);
+      }
+      .th-row-active:active {
+        background-color: var(--c-card-active);
+      }
+      .th-keypad-num {
+        background-color: var(--c-keypad-bg);
+        color: var(--c-keypad-text);
+        box-shadow: 0 0 0 1px var(--c-keypad-ring);
+      }
+      .th-keypad-del {
+        color: var(--c-muted);
+      }
+      .th-sheet {
+        background-color: var(--c-sheet);
+        border: 1px solid var(--c-ring);
+      }
+      .th-divide {
+        border-color: var(--c-ring);
+      }
+      #journalHeroImg {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+      #appTitleDisplay {
+        font-family: var(--title-font, inherit);
+      }
+      #app {
+        min-height: 100dvh;
+        min-height: -webkit-fill-available;
+        padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+      }
+      .safe-pad {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+      }
+      .safe-top {
+        padding-top: max(0.75rem, env(safe-area-inset-top));
+      }
+      .tabbar-h {
+        height: calc(3.5rem + env(safe-area-inset-bottom));
+      }
+      #bodyField {
+        min-height: 40vh;
+        resize: none;
+        font-size: 1.0625rem;
+      }
+      #titleField,
+      #searchField {
+        font-size: 1rem;
+      }
+      @media (min-width: 768px) {
+        #titleField {
+          font-size: 1.375rem;
+        }
+        #bodyField {
+          font-size: 1.0625rem;
+        }
+      }
+      #viewCompose.compose-vv {
+        top: var(--vv-top, 0px);
+        left: 0;
+        right: 0;
+        height: var(--vv-h, 100%);
+        min-height: var(--vv-h, 100dvh);
+      }
+      .mood-scroll {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .mood-scroll::-webkit-scrollbar {
+        display: none;
+      }
+      .swipe-front {
+        touch-action: pan-y;
+        will-change: transform;
+      }
+      @keyframes lock-shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-8px);
+        }
+        40%,
+        80% {
+          transform: translateX(8px);
+        }
+      }
+      .lock-shake {
+        animation: lock-shake 0.45s ease;
+      }
+      #lockOverlay:not(.hidden) ~ #app {
+        visibility: hidden !important;
+        pointer-events: none !important;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- 隐私锁（置于 #app 之前，用 ~ 选择器在显示时隐藏主界面交互） -->
+    <div
+      id="lockOverlay"
+      class="fixed inset-0 z-[100] flex flex-col th-bg hidden"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="lockTitle"
+    >
+      <div class="safe-top safe-pad flex-1 flex flex-col items-center pt-8 pb-6 min-h-0">
+        <p id="lockTitle" class="text-2xl font-semibold th-text" style="font-family: var(--title-font, inherit)">Littlethings</p>
+        <p id="lockSubtitle" class="text-[15px] th-muted mt-2 text-center px-4"></p>
+        <div id="lockDots" class="flex gap-3 mt-8" aria-live="polite"></div>
+        <p id="lockError" class="text-[14px] mt-3 min-h-[1.25rem] text-center px-4" style="color: var(--c-danger)"></p>
+        <div class="flex-1 min-h-8"></div>
+        <div id="lockKeypad" class="grid w-full max-w-xs grid-cols-3 gap-x-6 gap-y-4 pb-4 shrink-0"></div>
+        <div class="w-full max-w-xs flex flex-col gap-2 shrink-0 pb-safe" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom))">
+          <button
+            type="button"
+            id="lockBtnCancel"
+            class="hidden w-full rounded-xl py-3 text-[17px] font-medium th-accent th-card-flat ring-1 th-row-active"
+            style="box-shadow: 0 0 0 1px var(--c-ring)"
+          >
+            取消
+          </button>
+          <button type="button" id="lockBtnReset" class="w-full py-2 text-[14px] th-muted2 th-row-active">
+            忘记密码 · 清空本地数据
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="app" class="flex flex-col th-bg">
+      <!-- 日记 -->
+      <section id="tabJournal" class="tab-panel flex flex-col flex-1 min-h-0 th-bg" data-tab-panel="journal">
+        <div
+          id="journalHero"
+          class="relative w-full shrink-0 overflow-hidden flex flex-col justify-end min-h-[20dvh] min-h-[20vh]"
+        >
+          <div class="absolute inset-0 th-bg z-0" aria-hidden="true"></div>
+          <div id="journalHeroImg" class="absolute inset-0 z-[1] pointer-events-none opacity-0" aria-hidden="true"></div>
+          <div
+            id="journalHeroTint"
+            class="absolute inset-0 z-[2] pointer-events-none"
+            style="background: var(--c-hero-tint, transparent)"
+            aria-hidden="true"
+          ></div>
+          <div class="relative z-10 safe-top safe-pad w-full pb-3 pt-1 flex flex-col justify-end min-h-[12vh]">
+            <h1 id="appTitleDisplay" class="text-[clamp(1.45rem,5.5vw,2.15rem)] font-bold tracking-tight th-text px-1 leading-tight">
+              Littlethings
+            </h1>
+          </div>
+        </div>
+        <header class="safe-pad pb-2 pt-1 shrink-0">
+          <div class="relative">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 th-muted" aria-hidden="true">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </span>
+            <input
+              id="searchField"
+              type="search"
+              enterkeyhint="search"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+              placeholder="搜索标题或正文"
+              class="th-input w-full rounded-xl py-2.5 pl-10 pr-10 text-base shadow-sm placeholder:opacity-60"
+            />
+            <button
+              type="button"
+              id="btnClearSearch"
+              class="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-full p-1 th-muted th-row-active"
+              aria-label="清除搜索"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </header>
+        <div class="flex-1 overflow-y-auto safe-pad pt-1 pb-4 min-h-0">
+          <ul id="entryList" class="space-y-3" aria-label="日记列表"></ul>
+          <div id="emptyHint" class="hidden text-center th-muted text-sm mt-16 px-6">
+            还没有日记，点右下角按钮开始记录。
+          </div>
+          <div id="emptySearchHint" class="hidden text-center th-muted text-sm mt-16 px-6">没有匹配的日记。</div>
+        </div>
+        <button
+          type="button"
+          id="btnNew"
+          class="fixed z-40 flex h-14 w-14 items-center justify-center rounded-full th-accent-fill shadow-lg active:scale-95 transition-transform"
+          style="
+            bottom: calc(3.5rem + env(safe-area-inset-bottom) + 1rem);
+            right: max(1.25rem, env(safe-area-inset-right));
+          "
+          aria-label="新建日记"
+        >
+          <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </section>
+
+      <!-- 统计 -->
+      <section id="tabStats" class="tab-panel hidden flex flex-col flex-1 min-h-0 safe-pad pt-4 pb-2 th-bg" data-tab-panel="stats">
+        <h2 class="text-[28px] font-bold th-text px-1 mb-4">统计</h2>
+        <div class="space-y-3 flex-1 overflow-y-auto min-h-0 pb-2">
+          <div class="rounded-card th-card p-4">
+            <p class="text-[13px] th-muted uppercase tracking-wide">全部日记</p>
+            <p class="text-[34px] font-semibold th-text mt-1" id="statTotal">0</p>
+          </div>
+          <div class="rounded-card th-card p-4">
+            <p class="text-[13px] th-muted uppercase tracking-wide">本月</p>
+            <p class="text-[34px] font-semibold th-text mt-1" id="statMonth">0</p>
+          </div>
+          <div class="rounded-card th-card p-4">
+            <p class="text-[15px] font-semibold th-text mb-3">心情分布</p>
+            <div id="statMoods" class="flex flex-wrap gap-2"></div>
+            <p id="statMoodsEmpty" class="text-sm th-muted hidden">暂无心情标记</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 设置 -->
+      <section
+        id="tabSettings"
+        class="tab-panel hidden flex flex-col flex-1 min-h-0 safe-pad pt-4 pb-2 th-bg overflow-y-auto"
+        data-tab-panel="settings"
+      >
+        <h2 class="text-[28px] font-bold th-text px-1 mb-4">设置</h2>
+        <div class="rounded-card th-card overflow-hidden divide-y th-divide mb-3">
+          <div class="px-4 py-3">
+            <p class="text-[15px] th-muted">外观</p>
+            <p class="text-[13px] th-muted2 mt-2 mb-2">配色方案（参考 Material / Tailwind / Nord 等专业色板）</p>
+            <div id="schemePicker" class="grid grid-cols-4 gap-2 mt-2"></div>
+          </div>
+          <div class="px-4 py-3 space-y-3">
+            <p class="text-[15px] th-muted">显示模式</p>
+            <div class="flex rounded-xl th-input p-1 gap-1">
+              <button type="button" class="flex-1 rounded-lg py-2 text-[14px] font-medium th-row-active appearance-opt" data-appearance="light">浅色</button>
+              <button type="button" class="flex-1 rounded-lg py-2 text-[14px] font-medium th-row-active appearance-opt" data-appearance="dark">深色</button>
+              <button type="button" class="flex-1 rounded-lg py-2 text-[14px] font-medium th-row-active appearance-opt" data-appearance="system">跟随系统</button>
+            </div>
+          </div>
+          <div class="px-4 py-3 space-y-2">
+            <label class="text-[15px] th-muted" for="inputAppName">顶部显示名称</label>
+            <input
+              id="inputAppName"
+              type="text"
+              maxlength="24"
+              placeholder="例如：我的小记"
+              class="th-input w-full rounded-xl px-3 py-2.5 text-base"
+            />
+            <p class="text-[13px] th-muted2">显示在日记页顶部约 1/5 区域</p>
+          </div>
+          <div class="px-4 py-3 space-y-2">
+            <p class="text-[15px] th-muted">标题字体</p>
+            <select id="selectTitleFont" class="th-input w-full rounded-xl px-3 py-2.5 text-base appearance-none bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%23666%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E')">
+              <option value="system">系统默认</option>
+              <option value="sans">思源黑体风 · Noto Sans SC</option>
+              <option value="serif">思源宋体风 · Noto Serif SC</option>
+              <option value="rounded">圆润 · Quicksand</option>
+              <option value="display">衬线展示 · Playfair + 宋体</option>
+              <option value="hand">手写风 · Long Cang</option>
+              <option value="brush">毛笔风 · Ma Shan Zheng</option>
+            </select>
+          </div>
+          <div class="px-4 py-3 space-y-3">
+            <p class="text-[15px] th-muted">顶部背景图</p>
+            <p class="text-[13px] th-muted2">占屏幕高度约 1/5，可叠在名称后方</p>
+            <input type="file" id="heroFileInput" accept="image/*" class="hidden" />
+            <div class="flex flex-wrap gap-2">
+              <button type="button" id="btnHeroPick" class="rounded-xl px-4 py-2 text-[15px] font-medium th-input th-row-active">上传背景</button>
+              <button type="button" id="btnHeroClear" class="rounded-xl px-4 py-2 text-[15px] font-medium th-input th-row-active">移除背景</button>
+            </div>
+            <div>
+              <div class="flex justify-between text-[13px] th-muted2 mb-1">
+                <span>背景透明度</span><span id="heroOpacityLabel">65%</span>
+              </div>
+              <input id="rangeHeroOpacity" type="range" min="15" max="100" value="65" class="w-full accent-[var(--c-accent)]" />
+            </div>
+            <div>
+              <div class="flex justify-between text-[13px] th-muted2 mb-1">
+                <span>背景缩放</span><span id="heroScaleLabel">120%</span>
+              </div>
+              <input id="rangeHeroScale" type="range" min="100" max="200" value="120" class="w-full accent-[var(--c-accent)]" />
+            </div>
+          </div>
+        </div>
+        <div class="rounded-card th-card overflow-hidden divide-y th-divide">
+          <div class="px-4 py-3">
+            <p class="text-[15px] th-muted">应用</p>
+            <p class="text-[17px] font-medium th-text mt-0.5">Littlethings</p>
+            <p class="text-[13px] th-muted2 mt-1">数据仅保存在本设备</p>
+          </div>
+          <button
+            type="button"
+            id="btnPinEnable"
+            class="w-full text-left px-4 py-3.5 text-[17px] th-text th-row-active transition-colors"
+          >
+            开启隐私锁…
+          </button>
+          <button
+            type="button"
+            id="btnPinChange"
+            class="hidden w-full text-left px-4 py-3.5 text-[17px] th-text th-row-active transition-colors"
+          >
+            修改隐私锁密码…
+          </button>
+          <button
+            type="button"
+            id="btnPinDisable"
+            class="hidden w-full text-left px-4 py-3.5 text-[17px] th-text th-row-active transition-colors"
+          >
+            关闭隐私锁…
+          </button>
+          <button
+            type="button"
+            id="btnClearAll"
+            class="w-full text-left px-4 py-3.5 text-[17px] th-row-active transition-colors"
+            style="color: var(--c-danger)"
+          >
+            清空所有日记…
+          </button>
+        </div>
+      </section>
+
+      <!-- 底部导航 -->
+      <nav
+        id="mainTabNav"
+        class="fixed bottom-0 left-0 right-0 z-50 border-t th-tabbar backdrop-blur-md"
+        style="padding-bottom: env(safe-area-inset-bottom)"
+        aria-label="主导航"
+      >
+        <div class="flex h-14 items-stretch justify-around">
+          <button
+            type="button"
+            class="tab-btn tab-active flex flex-1 flex-col items-center justify-center gap-0.5"
+            data-tab="journal"
+            aria-current="page"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
+            </svg>
+            <span class="text-[10px] font-medium">日记</span>
+          </button>
+          <button
+            type="button"
+            class="tab-btn tab-inactive flex flex-1 flex-col items-center justify-center gap-0.5"
+            data-tab="stats"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            <span class="text-[10px] font-medium">统计</span>
+          </button>
+          <button
+            type="button"
+            class="tab-btn tab-inactive flex flex-1 flex-col items-center justify-center gap-0.5"
+            data-tab="settings"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-[10px] font-medium">设置</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- 撰写 / 编辑 -->
+      <section
+        id="viewCompose"
+        class="fixed inset-0 z-[60] hidden flex-col th-bg compose-vv"
+        aria-hidden="true"
+      >
+        <header
+          class="safe-top shrink-0 flex items-center justify-between gap-3 th-compose-bar px-4 py-2 backdrop-blur-sm"
+        >
+          <button
+            type="button"
+            id="btnCloseCompose"
+            class="rounded-lg px-2 py-2 text-[17px] th-accent active:opacity-60"
+          >
+            关闭
+          </button>
+          <span class="text-[13px] th-muted truncate flex-1 text-center" id="composeTimeLabel"></span>
+          <button
+            type="button"
+            id="btnSaveCompose"
+            class="rounded-lg px-2 py-2 text-[17px] font-semibold th-accent active:opacity-60"
+          >
+            完成
+          </button>
+        </header>
+        <div id="composeScroll" class="flex-1 overflow-y-auto overflow-x-hidden safe-pad min-h-0 th-bg">
+          <div class="mx-auto max-w-2xl rounded-card th-card p-5 min-h-full pb-8">
+            <p class="text-[13px] th-muted2 mb-3" id="composeMetaTime"></p>
+            <p class="text-[13px] font-medium th-muted mb-2">心情</p>
+            <div
+              id="moodPicker"
+              class="mood-scroll flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 mb-4"
+              role="listbox"
+              aria-label="选择心情"
+            ></div>
+            <div class="mb-4">
+              <p class="text-[13px] font-medium th-muted mb-2">图片（可选一张）</p>
+              <input type="file" id="imageFileInput" accept="image/*" class="hidden" />
+              <div id="composeImageEmpty" class="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  id="btnPickImage"
+                  class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-[15px] font-medium th-input th-row-active"
+                >
+                  <svg class="h-5 w-5 th-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  添加图片
+                </button>
+              </div>
+              <div id="composeImagePreviewWrap" class="hidden relative mt-3 inline-block max-w-full">
+                <img
+                  id="composeImagePreview"
+                  src=""
+                  alt="日记配图预览"
+                  class="max-h-48 w-auto max-w-full rounded-xl object-contain ring-1 th-input"
+                />
+                <button
+                  type="button"
+                  id="btnRemoveImage"
+                  class="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full th-text shadow-md text-lg leading-none th-card th-row-active"
+                  style="background: var(--c-card); border: 1px solid var(--c-ring)"
+                  aria-label="移除图片"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <label class="sr-only" for="titleField">标题</label>
+            <input
+              id="titleField"
+              type="text"
+              placeholder="标题"
+              maxlength="200"
+              class="w-full border-0 bg-transparent text-base md:text-[22px] font-semibold th-text placeholder:opacity-40 focus:ring-0 p-0 mb-4"
+            />
+            <label class="sr-only" for="bodyField">正文</label>
+            <textarea
+              id="bodyField"
+              placeholder="写点什么…"
+              class="w-full border-0 bg-transparent text-[17px] leading-relaxed th-text placeholder:opacity-40 focus:ring-0 p-0 opacity-95"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- 长按操作表 -->
+      <div id="actionSheetBackdrop" class="fixed inset-0 z-[70] hidden bg-black/40" aria-hidden="true"></div>
+      <div
+        id="actionSheet"
+        class="fixed left-0 right-0 bottom-0 z-[80] hidden translate-y-full transition-transform duration-300 ease-out"
+        style="padding-bottom: env(safe-area-inset-bottom)"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="actionSheetTitle"
+      >
+        <div class="mx-2 mb-2 overflow-hidden rounded-2xl th-sheet shadow-xl">
+          <p id="actionSheetTitle" class="sr-only">日记操作</p>
+          <button
+            type="button"
+            id="actionSheetDelete"
+            class="w-full py-3.5 text-[17px] font-medium th-row-active border-b th-divide"
+            style="color: var(--c-danger)"
+          >
+            删除日记
+          </button>
+          <button type="button" id="actionSheetCancel" class="w-full py-3.5 text-[17px] th-accent th-row-active">
+            取消
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const STORAGE_KEY = 'littlethings_entries';
+        const STORAGE_PIN_HASH = 'littlethings_pin_hash';
+        const STORAGE_PIN_SALT = 'littlethings_pin_salt';
+        const MOODS = ['😊', '😢', '😌', '😤', '🥰', '😴', '🤔', '✨', '💪', '📝', '😮', '🫶'];
+        const PIN_LEN = 4;
+        const IMAGE_MAX_W = 1280;
+        const IMAGE_JPEG_Q = 0.82;
+        const IMAGE_MAX_FILE_MB = 8;
+        const STORAGE_PREFS = 'littlethings_ui_prefs';
+        const HERO_IMG_MAX_W = 1920;
+
+        const DEFAULT_PREFS = {
+          appName: 'Littlethings',
+          titleFont: 'system',
+          heroBg: '',
+          heroOpacity: 0.65,
+          heroScale: 1.2,
+          scheme: 'ios',
+          appearance: 'system',
+        };
+
+        const TITLE_FONTS = {
+          system:
+            '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, sans-serif',
+          sans: '"Noto Sans SC", sans-serif',
+          serif: '"Noto Serif SC", serif',
+          rounded: '"Quicksand", "Noto Sans SC", sans-serif',
+          display: '"Playfair Display", "Noto Serif SC", serif',
+          hand: '"Long Cang", "Noto Sans SC", cursive',
+          brush: '"Ma Shan Zheng", "Noto Sans SC", cursive',
+        };
+
+        function schemePair(light, dark) {
+          return { light: light, dark: dark };
+        }
+
+        var SCHEMES = {
+          ios: schemePair(
+            {
+              bg: '#F2F2F7',
+              card: '#ffffff',
+              text: '#111827',
+              muted: '#6b7280',
+              muted2: '#9ca3af',
+              accent: '#2563eb',
+              ring: 'rgba(0,0,0,0.08)',
+              input: '#ffffff',
+              tabbar: 'rgba(248,248,248,0.95)',
+              tabbarBr: 'rgba(0,0,0,0.1)',
+              composeBar: '#f2f2f7',
+              cardActive: 'rgba(0,0,0,0.06)',
+              danger: '#dc2626',
+              keypadBg: '#ffffff',
+              keypadText: '#111827',
+              keypadRing: 'rgba(0,0,0,0.1)',
+              sheet: '#ffffff',
+              pill: '#f3f4f6',
+              heroTint: 'rgba(242,242,247,0.45)',
+            },
+            {
+              bg: '#000000',
+              card: '#1c1c1e',
+              text: '#f9fafb',
+              muted: '#9ca3af',
+              muted2: '#6b7280',
+              accent: '#0a84ff',
+              ring: 'rgba(255,255,255,0.12)',
+              input: '#2c2c2e',
+              tabbar: 'rgba(28,28,30,0.96)',
+              tabbarBr: 'rgba(255,255,255,0.14)',
+              composeBar: '#000000',
+              cardActive: 'rgba(255,255,255,0.08)',
+              danger: '#f87171',
+              keypadBg: '#2c2c2e',
+              keypadText: '#f9fafb',
+              keypadRing: 'rgba(255,255,255,0.12)',
+              sheet: '#2c2c2e',
+              pill: '#3a3a3c',
+              heroTint: 'rgba(0,0,0,0.5)',
+            }
+          ),
+          slate: schemePair(
+            {
+              bg: '#f8fafc',
+              card: '#ffffff',
+              text: '#0f172a',
+              muted: '#64748b',
+              muted2: '#94a3b8',
+              accent: '#0ea5e9',
+              ring: 'rgba(15,23,42,0.08)',
+              input: '#ffffff',
+              tabbar: 'rgba(248,250,252,0.95)',
+              tabbarBr: 'rgba(15,23,42,0.1)',
+              composeBar: '#f8fafc',
+              cardActive: 'rgba(15,23,42,0.05)',
+              danger: '#e11d48',
+              keypadBg: '#ffffff',
+              keypadText: '#0f172a',
+              keypadRing: 'rgba(15,23,42,0.1)',
+              sheet: '#ffffff',
+              pill: '#f1f5f9',
+              heroTint: 'rgba(248,250,252,0.5)',
+            },
+            {
+              bg: '#0f172a',
+              card: '#1e293b',
+              text: '#f1f5f9',
+              muted: '#94a3b8',
+              muted2: '#64748b',
+              accent: '#38bdf8',
+              ring: 'rgba(241,245,249,0.1)',
+              input: '#334155',
+              tabbar: 'rgba(30,41,59,0.96)',
+              tabbarBr: 'rgba(241,245,249,0.12)',
+              composeBar: '#0f172a',
+              cardActive: 'rgba(255,255,255,0.06)',
+              danger: '#fb7185',
+              keypadBg: '#334155',
+              keypadText: '#f1f5f9',
+              keypadRing: 'rgba(241,245,249,0.12)',
+              sheet: '#1e293b',
+              pill: '#334155',
+              heroTint: 'rgba(15,23,42,0.55)',
+            }
+          ),
+          ocean: schemePair(
+            {
+              bg: '#ecfeff',
+              card: '#ffffff',
+              text: '#134e4a',
+              muted: '#0f766e',
+              muted2: '#14b8a6',
+              accent: '#0d9488',
+              ring: 'rgba(13,148,136,0.12)',
+              input: '#ffffff',
+              tabbar: 'rgba(236,254,255,0.95)',
+              tabbarBr: 'rgba(13,148,136,0.15)',
+              composeBar: '#ecfeff',
+              cardActive: 'rgba(13,148,136,0.06)',
+              danger: '#dc2626',
+              keypadBg: '#ffffff',
+              keypadText: '#134e4a',
+              keypadRing: 'rgba(13,148,136,0.12)',
+              sheet: '#ffffff',
+              pill: '#ccfbf1',
+              heroTint: 'rgba(236,254,255,0.55)',
+            },
+            {
+              bg: '#042f2e',
+              card: '#115e59',
+              text: '#f0fdfa',
+              muted: '#5eead4',
+              muted2: '#2dd4bf',
+              accent: '#2dd4bf',
+              ring: 'rgba(240,253,250,0.12)',
+              input: '#134e4a',
+              tabbar: 'rgba(17,94,89,0.95)',
+              tabbarBr: 'rgba(240,253,250,0.12)',
+              composeBar: '#042f2e',
+              cardActive: 'rgba(255,255,255,0.08)',
+              danger: '#fca5a5',
+              keypadBg: '#134e4a',
+              keypadText: '#f0fdfa',
+              keypadRing: 'rgba(240,253,250,0.15)',
+              sheet: '#115e59',
+              pill: '#0f766e',
+              heroTint: 'rgba(4,47,46,0.55)',
+            }
+          ),
+          sunset: schemePair(
+            {
+              bg: '#fff7ed',
+              card: '#ffffff',
+              text: '#431407',
+              muted: '#9a3412',
+              muted2: '#c2410c',
+              accent: '#ea580c',
+              ring: 'rgba(234,88,12,0.12)',
+              input: '#ffffff',
+              tabbar: 'rgba(255,247,237,0.95)',
+              tabbarBr: 'rgba(124,45,18,0.12)',
+              composeBar: '#fff7ed',
+              cardActive: 'rgba(234,88,12,0.06)',
+              danger: '#b91c1c',
+              keypadBg: '#ffffff',
+              keypadText: '#431407',
+              keypadRing: 'rgba(124,45,18,0.12)',
+              sheet: '#ffffff',
+              pill: '#ffedd5',
+              heroTint: 'rgba(255,247,237,0.55)',
+            },
+            {
+              bg: '#1c1917',
+              card: '#292524',
+              text: '#fafaf9',
+              muted: '#a8a29e',
+              muted2: '#78716c',
+              accent: '#fb923c',
+              ring: 'rgba(250,250,249,0.1)',
+              input: '#44403c',
+              tabbar: 'rgba(41,37,36,0.96)',
+              tabbarBr: 'rgba(250,250,249,0.12)',
+              composeBar: '#1c1917',
+              cardActive: 'rgba(255,255,255,0.06)',
+              danger: '#f87171',
+              keypadBg: '#44403c',
+              keypadText: '#fafaf9',
+              keypadRing: 'rgba(250,250,249,0.12)',
+              sheet: '#292524',
+              pill: '#44403c',
+              heroTint: 'rgba(28,25,23,0.55)',
+            }
+          ),
+          forest: schemePair(
+            {
+              bg: '#ecfdf5',
+              card: '#ffffff',
+              text: '#14532d',
+              muted: '#166534',
+              muted2: '#22c55e',
+              accent: '#16a34a',
+              ring: 'rgba(22,101,52,0.12)',
+              input: '#ffffff',
+              tabbar: 'rgba(236,253,245,0.95)',
+              tabbarBr: 'rgba(22,101,52,0.12)',
+              composeBar: '#ecfdf5',
+              cardActive: 'rgba(22,163,74,0.08)',
+              danger: '#b91c1c',
+              keypadBg: '#ffffff',
+              keypadText: '#14532d',
+              keypadRing: 'rgba(22,101,52,0.12)',
+              sheet: '#ffffff',
+              pill: '#dcfce7',
+              heroTint: 'rgba(236,253,245,0.55)',
+            },
+            {
+              bg: '#052e16',
+              card: '#14532d',
+              text: '#f0fdf4',
+              muted: '#86efac',
+              muted2: '#4ade80',
+              accent: '#4ade80',
+              ring: 'rgba(240,253,244,0.12)',
+              input: '#166534',
+              tabbar: 'rgba(20,83,45,0.96)',
+              tabbarBr: 'rgba(240,253,244,0.12)',
+              composeBar: '#052e16',
+              cardActive: 'rgba(255,255,255,0.08)',
+              danger: '#fca5a5',
+              keypadBg: '#166534',
+              keypadText: '#f0fdf4',
+              keypadRing: 'rgba(240,253,244,0.12)',
+              sheet: '#14532d',
+              pill: '#166534',
+              heroTint: 'rgba(5,46,22,0.55)',
+            }
+          ),
+          violet: schemePair(
+            {
+              bg: '#f5f3ff',
+              card: '#ffffff',
+              text: '#1e1b4b',
+              muted: '#6d28d9',
+              muted2: '#7c3aed',
+              accent: '#7c3aed',
+              ring: 'rgba(109,40,217,0.1)',
+              input: '#ffffff',
+              tabbar: 'rgba(245,243,255,0.95)',
+              tabbarBr: 'rgba(76,29,149,0.12)',
+              composeBar: '#f5f3ff',
+              cardActive: 'rgba(109,40,217,0.06)',
+              danger: '#be123c',
+              keypadBg: '#ffffff',
+              keypadText: '#1e1b4b',
+              keypadRing: 'rgba(76,29,149,0.12)',
+              sheet: '#ffffff',
+              pill: '#ede9fe',
+              heroTint: 'rgba(245,243,255,0.55)',
+            },
+            {
+              bg: '#1e1b4b',
+              card: '#312e81',
+              text: '#eef2ff',
+              muted: '#a5b4fc',
+              muted2: '#818cf8',
+              accent: '#a78bfa',
+              ring: 'rgba(238,242,255,0.12)',
+              input: '#3730a3',
+              tabbar: 'rgba(49,46,129,0.96)',
+              tabbarBr: 'rgba(238,242,255,0.12)',
+              composeBar: '#1e1b4b',
+              cardActive: 'rgba(255,255,255,0.08)',
+              danger: '#fb7185',
+              keypadBg: '#3730a3',
+              keypadText: '#eef2ff',
+              keypadRing: 'rgba(238,242,255,0.12)',
+              sheet: '#312e81',
+              pill: '#4338ca',
+              heroTint: 'rgba(30,27,75,0.55)',
+            }
+          ),
+          nord: schemePair(
+            {
+              bg: '#eceff4',
+              card: '#e5e9f0',
+              text: '#2e3440',
+              muted: '#4c566a',
+              muted2: '#5e81ac',
+              accent: '#5e81ac',
+              ring: 'rgba(46,52,64,0.12)',
+              input: '#ffffff',
+              tabbar: 'rgba(236,239,244,0.95)',
+              tabbarBr: 'rgba(46,52,64,0.12)',
+              composeBar: '#eceff4',
+              cardActive: 'rgba(46,52,64,0.06)',
+              danger: '#bf616a',
+              keypadBg: '#ffffff',
+              keypadText: '#2e3440',
+              keypadRing: 'rgba(46,52,64,0.1)',
+              sheet: '#ffffff',
+              pill: '#d8dee9',
+              heroTint: 'rgba(236,239,244,0.55)',
+            },
+            {
+              bg: '#2e3440',
+              card: '#3b4252',
+              text: '#eceff4',
+              muted: '#d8dee9',
+              muted2: '#81a1c1',
+              accent: '#88c0d0',
+              ring: 'rgba(236,239,244,0.1)',
+              input: '#434c5e',
+              tabbar: 'rgba(59,66,82,0.96)',
+              tabbarBr: 'rgba(236,239,244,0.12)',
+              composeBar: '#2e3440',
+              cardActive: 'rgba(255,255,255,0.06)',
+              danger: '#bf616a',
+              keypadBg: '#434c5e',
+              keypadText: '#eceff4',
+              keypadRing: 'rgba(236,239,244,0.12)',
+              sheet: '#3b4252',
+              pill: '#4c566a',
+              heroTint: 'rgba(46,52,64,0.55)',
+            }
+          ),
+          rose: schemePair(
+            {
+              bg: '#fff1f2',
+              card: '#ffffff',
+              text: '#881337',
+              muted: '#be123c',
+              muted2: '#e11d48',
+              accent: '#e11d48',
+              ring: 'rgba(190,18,60,0.1)',
+              input: '#ffffff',
+              tabbar: 'rgba(255,241,242,0.95)',
+              tabbarBr: 'rgba(136,19,55,0.12)',
+              composeBar: '#fff1f2',
+              cardActive: 'rgba(225,29,72,0.06)',
+              danger: '#b45309',
+              keypadBg: '#ffffff',
+              keypadText: '#881337',
+              keypadRing: 'rgba(136,19,55,0.12)',
+              sheet: '#ffffff',
+              pill: '#ffe4e6',
+              heroTint: 'rgba(255,241,242,0.55)',
+            },
+            {
+              bg: '#1f2937',
+              card: '#374151',
+              text: '#fdf2f8',
+              muted: '#f9a8d4',
+              muted2: '#f472b6',
+              accent: '#fb7185',
+              ring: 'rgba(253,242,248,0.12)',
+              input: '#4b5563',
+              tabbar: 'rgba(55,65,81,0.96)',
+              tabbarBr: 'rgba(253,242,248,0.12)',
+              composeBar: '#1f2937',
+              cardActive: 'rgba(255,255,255,0.08)',
+              danger: '#fca5a5',
+              keypadBg: '#4b5563',
+              keypadText: '#fdf2f8',
+              keypadRing: 'rgba(253,242,248,0.12)',
+              sheet: '#374151',
+              pill: '#4b5563',
+              heroTint: 'rgba(31,41,55,0.55)',
+            }
+          ),
+        };
+
+        function loadPrefs() {
+          try {
+            var raw = localStorage.getItem(STORAGE_PREFS);
+            var o = raw ? JSON.parse(raw) : {};
+            return Object.assign({}, DEFAULT_PREFS, o);
+          } catch (e) {
+            return Object.assign({}, DEFAULT_PREFS);
+          }
+        }
+
+        function savePrefs(patch) {
+          var p = Object.assign(loadPrefs(), patch);
+          localStorage.setItem(STORAGE_PREFS, JSON.stringify(p));
+          applyAppearance();
+          syncSettingsForm();
+        }
+
+        function isDarkAppearance() {
+          var p = loadPrefs();
+          if (p.appearance === 'dark') return true;
+          if (p.appearance === 'light') return false;
+          return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+
+        function applyAppearance() {
+          var p = loadPrefs();
+          var dark = isDarkAppearance();
+          var sid = SCHEMES[p.scheme] ? p.scheme : 'ios';
+          var t = SCHEMES[sid][dark ? 'dark' : 'light'];
+          var root = document.documentElement;
+          root.setAttribute('data-theme', dark ? 'dark' : 'light');
+          root.style.setProperty('--c-bg', t.bg);
+          root.style.setProperty('--c-card', t.card);
+          root.style.setProperty('--c-text', t.text);
+          root.style.setProperty('--c-muted', t.muted);
+          root.style.setProperty('--c-muted2', t.muted2);
+          root.style.setProperty('--c-accent', t.accent);
+          root.style.setProperty('--c-ring', t.ring);
+          root.style.setProperty('--c-input', t.input);
+          root.style.setProperty('--c-tabbar', t.tabbar);
+          root.style.setProperty('--c-tabbar-br', t.tabbarBr);
+          root.style.setProperty('--c-compose-bar', t.composeBar);
+          root.style.setProperty('--c-card-active', t.cardActive);
+          root.style.setProperty('--c-danger', t.danger);
+          root.style.setProperty('--c-keypad-bg', t.keypadBg);
+          root.style.setProperty('--c-keypad-text', t.keypadText);
+          root.style.setProperty('--c-keypad-ring', t.keypadRing);
+          root.style.setProperty('--c-sheet', t.sheet);
+          root.style.setProperty('--c-pill', t.pill);
+          root.style.setProperty('--c-hero-tint', t.heroTint);
+          var tf = TITLE_FONTS[p.titleFont] || TITLE_FONTS.system;
+          root.style.setProperty('--title-font', tf);
+          var meta = document.getElementById('metaThemeColor');
+          if (meta) meta.setAttribute('content', t.bg);
+          var status = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+          if (status) status.setAttribute('content', dark ? 'black-translucent' : 'default');
+          syncAppTitle();
+          applyHeroImage();
+        }
+
+        function syncAppTitle() {
+          var name = (loadPrefs().appName || 'Littlethings').trim() || 'Littlethings';
+          var el = document.getElementById('appTitleDisplay');
+          var lk = document.getElementById('lockTitle');
+          var dark = isDarkAppearance();
+          var sh = dark ? '0 2px 14px rgba(0,0,0,0.85)' : '0 1px 4px rgba(0,0,0,0.18)';
+          if (el) {
+            el.textContent = name;
+            el.style.textShadow = sh;
+          }
+          if (lk) {
+            lk.textContent = name;
+            lk.style.textShadow = sh;
+          }
+          document.title = name;
+        }
+
+        function applyHeroImage() {
+          var p = loadPrefs();
+          var layer = document.getElementById('journalHeroImg');
+          if (!layer) return;
+          var bg = sanitizeImageData(p.heroBg || '');
+          if (!bg) {
+            layer.style.backgroundImage = '';
+            layer.classList.add('opacity-0');
+            layer.style.opacity = '0';
+            layer.style.transform = 'scale(1)';
+            return;
+          }
+          layer.style.backgroundImage = 'url(' + JSON.stringify(bg) + ')';
+          var op = Math.max(0.08, Math.min(1, Number(p.heroOpacity) || 0.65));
+          layer.style.opacity = String(op);
+          layer.classList.remove('opacity-0');
+          var sc = Math.max(1, Math.min(2, Number(p.heroScale) || 1.2));
+          layer.style.transform = 'scale(' + sc + ')';
+        }
+
+        function syncSettingsForm() {
+          var p = loadPrefs();
+          var nameEl = document.getElementById('inputAppName');
+          var fontEl = document.getElementById('selectTitleFont');
+          var ro = document.getElementById('rangeHeroOpacity');
+          var rs = document.getElementById('rangeHeroScale');
+          var lo = document.getElementById('heroOpacityLabel');
+          var ls = document.getElementById('heroScaleLabel');
+          if (nameEl) nameEl.value = p.appName || '';
+          if (fontEl) fontEl.value = p.titleFont in TITLE_FONTS ? p.titleFont : 'system';
+          if (ro) {
+            ro.value = String(Math.round((Number(p.heroOpacity) || 0.65) * 100));
+            if (lo) lo.textContent = ro.value + '%';
+          }
+          if (rs) {
+            rs.value = String(Math.round((Number(p.heroScale) || 1.2) * 100));
+            if (ls) ls.textContent = rs.value + '%';
+          }
+          document.querySelectorAll('.appearance-opt').forEach(function (b) {
+            var on = b.getAttribute('data-appearance') === p.appearance;
+            b.classList.toggle('th-accent-fill', on);
+            b.classList.toggle('th-text', !on);
+          });
+          document.querySelectorAll('[data-scheme]').forEach(function (b) {
+            var cur = p.scheme in SCHEMES ? p.scheme : 'ios';
+            var on = b.getAttribute('data-scheme') === cur;
+            b.style.outline = on ? '2px solid var(--c-accent)' : 'none';
+            b.style.outlineOffset = on ? '2px' : '';
+          });
+        }
+
+        function buildSchemePicker() {
+          var wrap = document.getElementById('schemePicker');
+          if (!wrap) return;
+          var defs = [
+            { id: 'ios', label: 'iOS', c1: '#f2f2f7', c2: '#2563eb' },
+            { id: 'slate', label: 'Slate', c1: '#f8fafc', c2: '#0ea5e9' },
+            { id: 'ocean', label: '海洋', c1: '#ecfeff', c2: '#0d9488' },
+            { id: 'sunset', label: '暮光', c1: '#fff7ed', c2: '#ea580c' },
+            { id: 'forest', label: '森林', c1: '#ecfdf5', c2: '#16a34a' },
+            { id: 'violet', label: '紫罗兰', c1: '#f5f3ff', c2: '#7c3aed' },
+            { id: 'nord', label: 'Nord', c1: '#eceff4', c2: '#5e81ac' },
+            { id: 'rose', label: '玫瑰', c1: '#fff1f2', c2: '#e11d48' },
+          ];
+          wrap.innerHTML = '';
+          defs.forEach(function (d) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('data-scheme', d.id);
+            b.className =
+              'relative h-14 rounded-xl overflow-hidden ring-1 th-row-active transition-transform active:scale-95';
+            b.style.boxShadow = 'inset 0 0 0 1px var(--c-ring)';
+            b.setAttribute('aria-label', '配色 ' + d.label);
+            b.innerHTML =
+              '<span class="absolute inset-0" style="background:linear-gradient(135deg,' +
+              d.c1 +
+              ' 40%,' +
+              d.c2 +
+              ')"></span><span class="absolute bottom-1 left-1 right-1 text-[10px] font-semibold text-white drop-shadow truncate">' +
+              d.label +
+              '</span>';
+            b.addEventListener('click', function () {
+              savePrefs({ scheme: d.id });
+            });
+            wrap.appendChild(b);
+          });
+        }
+
+        /** @typedef {{ id: string, title: string, body: string, mood: string, imageData: string, createdAt: string, updatedAt: string }} Entry */
+
+        function sanitizeImageData(s) {
+          if (typeof s !== 'string' || !s.startsWith('data:image/')) return '';
+          if (s.indexOf('base64,') === -1) return '';
+          return s.length > 12 * 1024 * 1024 ? '' : s;
+        }
+
+        function loadEntries() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return [];
+            const arr = JSON.parse(raw);
+            if (!Array.isArray(arr)) return [];
+            return arr.map(function (e) {
+              return {
+                id: e.id,
+                title: e.title || '',
+                body: e.body || '',
+                mood: typeof e.mood === 'string' ? e.mood : '',
+                imageData: sanitizeImageData(e.imageData),
+                createdAt: e.createdAt || '',
+                updatedAt: e.updatedAt || e.createdAt || '',
+              };
+            });
+          } catch {
+            return [];
+          }
+        }
+
+        /** @param {Entry[]} entries */
+        function saveEntries(entries) {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+          } catch (err) {
+            alert('保存失败：浏览器存储空间不足。请删除部分日记、移除配图或导出后清理。');
+            throw err;
+          }
+        }
+
+        function newId() {
+          return 'e_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 9);
+        }
+
+        function formatListDate(iso) {
+          const d = new Date(iso);
+          if (Number.isNaN(d.getTime())) return '';
+          return d.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        }
+
+        function formatComposeTime(iso) {
+          const d = new Date(iso);
+          if (Number.isNaN(d.getTime())) return '';
+          return d.toLocaleString('zh-CN', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
+        }
+
+        function hexFromBuffer(buf) {
+          return Array.prototype.map
+            .call(new Uint8Array(buf), function (b) {
+              return ('0' + b.toString(16)).slice(-2);
+            })
+            .join('');
+        }
+
+        function hashPinSync(pin, salt) {
+          var s = salt + ':' + pin;
+          var h = 5381;
+          for (var i = 0; i < s.length; i++) {
+            h = (h * 33) ^ s.charCodeAt(i);
+          }
+          return 't1_' + (h >>> 0).toString(16) + '_' + s.length;
+        }
+
+        function hashPin(pin, salt) {
+          if (window.crypto && crypto.subtle) {
+            var enc = new TextEncoder();
+            return crypto.subtle
+              .digest('SHA-256', enc.encode('littlethings:' + salt + ':' + pin))
+              .then(function (buf) {
+                return 's256_' + hexFromBuffer(buf);
+              });
+          }
+          return Promise.resolve(hashPinSync(pin, salt));
+        }
+
+        function randomSalt() {
+          var a = new Uint8Array(16);
+          if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a);
+          else for (var i = 0; i < a.length; i++) a[i] = (Math.random() * 256) | 0;
+          return Array.prototype.map
+            .call(a, function (b) {
+              return ('0' + b.toString(16)).slice(-2);
+            })
+            .join('');
+        }
+
+        function getStoredPinHash() {
+          return localStorage.getItem(STORAGE_PIN_HASH) || '';
+        }
+
+        function getStoredPinSalt() {
+          return localStorage.getItem(STORAGE_PIN_SALT) || '';
+        }
+
+        function hasPinConfigured() {
+          return !!getStoredPinHash();
+        }
+
+        function clearPinStorage() {
+          localStorage.removeItem(STORAGE_PIN_HASH);
+          localStorage.removeItem(STORAGE_PIN_SALT);
+        }
+
+        function savePinHash(hash, salt) {
+          localStorage.setItem(STORAGE_PIN_HASH, hash);
+          localStorage.setItem(STORAGE_PIN_SALT, salt);
+        }
+
+        /**
+         * @param {File} file
+         * @param {function(string)} onDone data URL jpeg
+         * @param {function(string)} onErr
+         */
+        function compressImageToDataUrl(file, onDone, onErr, maxWidthOpt) {
+          var maxW = typeof maxWidthOpt === 'number' && maxWidthOpt > 0 ? maxWidthOpt : IMAGE_MAX_W;
+          if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+            onErr('请选择图片文件');
+            return;
+          }
+          if (file.size > IMAGE_MAX_FILE_MB * 1024 * 1024) {
+            onErr('图片过大（最大 ' + IMAGE_MAX_FILE_MB + 'MB）');
+            return;
+          }
+          var reader = new FileReader();
+          reader.onerror = function () {
+            onErr('读取失败');
+          };
+          reader.onload = function () {
+            var url = reader.result;
+            if (typeof url !== 'string') {
+              onErr('读取失败');
+              return;
+            }
+            var img = new Image();
+            img.onload = function () {
+              try {
+                var w = img.naturalWidth || img.width;
+                var h = img.naturalHeight || img.height;
+                if (!w || !h) {
+                  onErr('无效图片');
+                  return;
+                }
+                var nw = w;
+                var nh = h;
+                if (nw > maxW) {
+                  nh = Math.round((nh * maxW) / nw);
+                  nw = maxW;
+                }
+                var canvas = document.createElement('canvas');
+                canvas.width = nw;
+                canvas.height = nh;
+                var ctx = canvas.getContext('2d');
+                if (!ctx) {
+                  onErr('无法处理图片');
+                  return;
+                }
+                ctx.drawImage(img, 0, 0, nw, nh);
+                var dataUrl = canvas.toDataURL('image/jpeg', IMAGE_JPEG_Q);
+                if (!dataUrl || dataUrl.length < 32) {
+                  onErr('压缩失败');
+                  return;
+                }
+                onDone(dataUrl);
+              } catch (e) {
+                onErr('处理失败');
+              }
+            };
+            img.onerror = function () {
+              onErr('无法解码图片');
+            };
+            img.src = url;
+          };
+          reader.readAsDataURL(file);
+        }
+
+        const entryList = document.getElementById('entryList');
+        const emptyHint = document.getElementById('emptyHint');
+        const emptySearchHint = document.getElementById('emptySearchHint');
+        const titleField = document.getElementById('titleField');
+        const bodyField = document.getElementById('bodyField');
+        const composeMetaTime = document.getElementById('composeMetaTime');
+        const composeTimeLabel = document.getElementById('composeTimeLabel');
+        const viewCompose = document.getElementById('viewCompose');
+        const composeScroll = document.getElementById('composeScroll');
+        const searchField = document.getElementById('searchField');
+        const btnClearSearch = document.getElementById('btnClearSearch');
+        const moodPicker = document.getElementById('moodPicker');
+        const actionSheet = document.getElementById('actionSheet');
+        const actionSheetBackdrop = document.getElementById('actionSheetBackdrop');
+        const actionSheetDelete = document.getElementById('actionSheetDelete');
+        const actionSheetCancel = document.getElementById('actionSheetCancel');
+        const lockOverlay = document.getElementById('lockOverlay');
+        const lockSubtitle = document.getElementById('lockSubtitle');
+        const lockDots = document.getElementById('lockDots');
+        const lockKeypad = document.getElementById('lockKeypad');
+        const lockError = document.getElementById('lockError');
+        const lockBtnCancel = document.getElementById('lockBtnCancel');
+        const lockBtnReset = document.getElementById('lockBtnReset');
+        const appRoot = document.getElementById('app');
+        const imageFileInput = document.getElementById('imageFileInput');
+        const btnPickImage = document.getElementById('btnPickImage');
+        const btnRemoveImage = document.getElementById('btnRemoveImage');
+        const composeImagePreviewWrap = document.getElementById('composeImagePreviewWrap');
+        const composeImagePreview = document.getElementById('composeImagePreview');
+        const composeImageEmpty = document.getElementById('composeImageEmpty');
+        const btnPinEnable = document.getElementById('btnPinEnable');
+        const btnPinChange = document.getElementById('btnPinChange');
+        const btnPinDisable = document.getElementById('btnPinDisable');
+
+        let searchQuery = '';
+        /** @type {string | null} */
+        let editingId = null;
+        /** @type {string} */
+        let draftCreatedAt = '';
+        /** @type {string} */
+        let selectedMood = '';
+        /** @type {string | null} */
+        let actionSheetEntryId = null;
+
+        var sessionUnlocked = false;
+        /** @type {'unlock'|'setup'|'setup_confirm'|'change_old'|'change_new'|'change_confirm'|'disable'} */
+        var lockMode = 'unlock';
+        var lockInputBuffer = '';
+        var lockSetupFirst = '';
+        var lockProcessing = false;
+        /** @type {string} */
+        var draftImageData = '';
+
+        /** @type {HTMLElement | null} */
+        let openSwipeEl = null;
+        const DELETE_WIDTH = 80;
+
+        function sortedEntries(entries) {
+          return entries.slice().sort(function (a, b) {
+            const ta = new Date(a.updatedAt || a.createdAt).getTime();
+            const tb = new Date(b.updatedAt || b.createdAt).getTime();
+            return tb - ta;
+          });
+        }
+
+        function filterBySearch(entries) {
+          const q = searchQuery.trim().toLowerCase();
+          if (!q) return entries;
+          return entries.filter(function (e) {
+            const t = (e.title || '').toLowerCase();
+            const b = (e.body || '').toLowerCase();
+            const m = (e.mood || '').toLowerCase();
+            return t.indexOf(q) !== -1 || b.indexOf(q) !== -1 || m.indexOf(q) !== -1;
+          });
+        }
+
+        function updateLockDots() {
+          lockDots.innerHTML = '';
+          for (var i = 0; i < PIN_LEN; i++) {
+            var filled = i < lockInputBuffer.length;
+            var dot = document.createElement('span');
+            dot.className = 'h-3 w-3 rounded-full border-2';
+            dot.style.borderColor = filled ? 'var(--c-accent)' : 'var(--c-ring)';
+            dot.style.backgroundColor = filled ? 'var(--c-accent)' : 'transparent';
+            dot.setAttribute('aria-hidden', 'true');
+            lockDots.appendChild(dot);
+          }
+        }
+
+        function setLockError(msg) {
+          lockError.textContent = msg || '';
+        }
+
+        function shakeLockUi() {
+          lockDots.classList.add('lock-shake');
+          setTimeout(function () {
+            lockDots.classList.remove('lock-shake');
+          }, 500);
+        }
+
+        function buildLockKeypad() {
+          lockKeypad.innerHTML = '';
+          var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'];
+          keys.forEach(function (k) {
+            var cell = document.createElement('div');
+            cell.className = 'flex items-center justify-center';
+            if (k === '') {
+              lockKeypad.appendChild(cell);
+              return;
+            }
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className =
+              'flex h-14 w-14 items-center justify-center rounded-full text-[24px] font-medium ' +
+              (k === 'del' ? 'th-keypad-del text-lg font-normal th-row-active' : 'th-keypad-num th-row-active');
+            btn.textContent = k === 'del' ? '删除' : k;
+            btn.setAttribute('aria-label', k === 'del' ? '删除一位' : '数字 ' + k);
+            btn.addEventListener('click', function () {
+              if (lockProcessing) return;
+              if (k === 'del') {
+                lockInputBuffer = lockInputBuffer.slice(0, -1);
+                updateLockDots();
+                setLockError('');
+                return;
+              }
+              if (lockInputBuffer.length >= PIN_LEN) return;
+              lockInputBuffer += k;
+              updateLockDots();
+              setLockError('');
+              if (lockInputBuffer.length === PIN_LEN) void processLockPinComplete();
+            });
+            cell.appendChild(btn);
+            lockKeypad.appendChild(cell);
+          });
+        }
+
+        function showLockOverlay(mode) {
+          lockMode = mode;
+          lockInputBuffer = '';
+          lockProcessing = false;
+          setLockError('');
+          updateLockDots();
+          var sub = '';
+          if (mode === 'unlock') sub = '输入 ' + PIN_LEN + ' 位数字密码以继续';
+          else if (mode === 'setup') sub = '设置 ' + PIN_LEN + ' 位数字密码';
+          else if (mode === 'setup_confirm') sub = '再次输入以确认';
+          else if (mode === 'change_old') sub = '请输入当前密码';
+          else if (mode === 'change_new') sub = '设置新密码（' + PIN_LEN + ' 位数字）';
+          else if (mode === 'change_confirm') sub = '再次输入新密码以确认';
+          else if (mode === 'disable') sub = '输入当前密码以关闭隐私锁';
+          lockSubtitle.textContent = sub;
+          lockBtnCancel.classList.toggle('hidden', mode === 'unlock');
+          lockBtnReset.classList.toggle('hidden', mode !== 'unlock');
+          lockOverlay.classList.remove('hidden');
+          appRoot.setAttribute('aria-hidden', 'true');
+        }
+
+        function hideLockOverlay() {
+          lockOverlay.classList.add('hidden');
+          lockInputBuffer = '';
+          lockSetupFirst = '';
+          lockProcessing = false;
+          setLockError('');
+          appRoot.removeAttribute('aria-hidden');
+        }
+
+        function updatePinSettingsUi() {
+          var on = hasPinConfigured();
+          btnPinEnable.classList.toggle('hidden', on);
+          btnPinChange.classList.toggle('hidden', !on);
+          btnPinDisable.classList.toggle('hidden', !on);
+        }
+
+        async function processLockPinComplete() {
+          if (lockProcessing) return;
+          var pin = lockInputBuffer;
+          if (pin.length !== PIN_LEN) return;
+          lockProcessing = true;
+          lockInputBuffer = '';
+          updateLockDots();
+
+          try {
+            if (lockMode === 'unlock') {
+              var salt = getStoredPinSalt();
+              var h = await hashPin(pin, salt);
+              if (h === getStoredPinHash()) {
+                sessionUnlocked = true;
+                hideLockOverlay();
+              } else {
+                setLockError('密码错误');
+                shakeLockUi();
+              }
+            } else if (lockMode === 'setup') {
+              lockSetupFirst = pin;
+              lockMode = 'setup_confirm';
+              lockSubtitle.textContent = '再次输入以确认';
+              lockBtnCancel.classList.remove('hidden');
+            } else if (lockMode === 'setup_confirm') {
+              if (pin !== lockSetupFirst) {
+                setLockError('两次输入不一致');
+                shakeLockUi();
+                lockMode = 'setup';
+                lockSubtitle.textContent = '设置 ' + PIN_LEN + ' 位数字密码';
+                lockSetupFirst = '';
+              } else {
+                var s1 = randomSalt();
+                var h1 = await hashPin(lockSetupFirst, s1);
+                savePinHash(h1, s1);
+                sessionUnlocked = true;
+                lockSetupFirst = '';
+                hideLockOverlay();
+                updatePinSettingsUi();
+              }
+            } else if (lockMode === 'change_old') {
+              var sOld = getStoredPinSalt();
+              var hOld = await hashPin(pin, sOld);
+              if (hOld !== getStoredPinHash()) {
+                setLockError('密码错误');
+                shakeLockUi();
+              } else {
+                lockMode = 'change_new';
+                lockSubtitle.textContent = '设置新密码（' + PIN_LEN + ' 位数字）';
+              }
+            } else if (lockMode === 'change_new') {
+              lockSetupFirst = pin;
+              lockMode = 'change_confirm';
+              lockSubtitle.textContent = '再次输入新密码以确认';
+            } else if (lockMode === 'change_confirm') {
+              if (pin !== lockSetupFirst) {
+                setLockError('两次输入不一致');
+                shakeLockUi();
+                lockMode = 'change_new';
+                lockSubtitle.textContent = '设置新密码（' + PIN_LEN + ' 位数字）';
+                lockSetupFirst = '';
+              } else {
+                var s2 = randomSalt();
+                var h2 = await hashPin(lockSetupFirst, s2);
+                savePinHash(h2, s2);
+                lockSetupFirst = '';
+                hideLockOverlay();
+                updatePinSettingsUi();
+              }
+            } else if (lockMode === 'disable') {
+              var s3 = getStoredPinSalt();
+              var h3 = await hashPin(pin, s3);
+              if (h3 !== getStoredPinHash()) {
+                setLockError('密码错误');
+                shakeLockUi();
+              } else {
+                clearPinStorage();
+                sessionUnlocked = true;
+                hideLockOverlay();
+                updatePinSettingsUi();
+              }
+            }
+          } finally {
+            lockProcessing = false;
+          }
+        }
+
+        function initLockOnBoot() {
+          updatePinSettingsUi();
+          buildLockKeypad();
+          if (hasPinConfigured() && !sessionUnlocked) {
+            showLockOverlay('unlock');
+          } else {
+            lockOverlay.classList.add('hidden');
+            appRoot.removeAttribute('aria-hidden');
+          }
+        }
+
+        function syncComposeImageUi() {
+          var has = !!draftImageData;
+          composeImagePreviewWrap.classList.toggle('hidden', !has);
+          composeImageEmpty.classList.toggle('hidden', has);
+          if (has) composeImagePreview.src = draftImageData;
+          else composeImagePreview.removeAttribute('src');
+        }
+
+        function previewText(body, max) {
+          const t = (body || '').replace(/\s+/g, ' ').trim();
+          if (!t) return '无正文';
+          return t.length > max ? t.slice(0, max) + '…' : t;
+        }
+
+        function escapeHtml(s) {
+          const div = document.createElement('div');
+          div.textContent = s;
+          return div.innerHTML;
+        }
+
+        function parseTranslateX(transform) {
+          if (!transform || transform === 'none') return 0;
+          const m = /translateX\((-?[0-9.]+)px\)/.exec(transform);
+          return m ? parseFloat(m[1], 10) : 0;
+        }
+
+        function closeAllSwipes() {
+          document.querySelectorAll('.swipe-front[data-open="1"]').forEach(function (el) {
+            el.style.transform = 'translateX(0)';
+            el.dataset.open = '0';
+          });
+          openSwipeEl = null;
+        }
+
+        function attachSwipe(li, frontEl, deleteBtn, entryId) {
+          let startX = 0;
+          let startY = 0;
+          let baseTx = 0;
+          let tracking = false;
+          let horizontal = false;
+
+          function currentTx() {
+            const m = frontEl.style.transform.match(/translateX\((-?[0-9.]+)px\)/);
+            return m ? parseFloat(m[1], 10) : 0;
+          }
+
+          function setTx(tx) {
+            const clamped = Math.max(-DELETE_WIDTH, Math.min(0, tx));
+            frontEl.style.transform = 'translateX(' + clamped + 'px)';
+          }
+
+          frontEl.addEventListener(
+            'touchstart',
+            function (ev) {
+              if (ev.touches.length !== 1) return;
+              if (openSwipeEl && openSwipeEl !== frontEl) closeAllSwipes();
+              startX = ev.touches[0].clientX;
+              startY = ev.touches[0].clientY;
+              baseTx = currentTx();
+              tracking = true;
+              horizontal = false;
+            },
+            { passive: true }
+          );
+
+          frontEl.addEventListener(
+            'touchmove',
+            function (ev) {
+              if (!tracking || ev.touches.length !== 1) return;
+              const x = ev.touches[0].clientX;
+              const y = ev.touches[0].clientY;
+              const dx = x - startX;
+              const dy = y - startY;
+              if (!horizontal) {
+                if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.2) horizontal = true;
+                else if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) {
+                  tracking = false;
+                  return;
+                }
+              }
+              if (horizontal) {
+                ev.preventDefault();
+                setTx(baseTx + dx);
+              }
+            },
+            { passive: false }
+          );
+
+          function endTouch(ev) {
+            if (!tracking) return;
+            tracking = false;
+            if (!horizontal) return;
+            const tx = currentTx();
+            if (tx < -DELETE_WIDTH * 0.35) {
+              setTx(-DELETE_WIDTH);
+              frontEl.dataset.open = '1';
+              openSwipeEl = frontEl;
+            } else {
+              setTx(0);
+              frontEl.dataset.open = '0';
+              if (openSwipeEl === frontEl) openSwipeEl = null;
+            }
+            horizontal = false;
+          }
+
+          frontEl.addEventListener('touchend', endTouch);
+          frontEl.addEventListener('touchcancel', endTouch);
+
+          deleteBtn.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            deleteEntryById(entryId);
+            closeAllSwipes();
+          });
+        }
+
+        let longPressTimer = null;
+        let longPressFired = false;
+        let longPressStart = null;
+
+        function clearLongPress() {
+          if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }
+          longPressStart = null;
+        }
+
+        function bindLongPress(openBtn, entryId) {
+          openBtn.addEventListener(
+            'touchstart',
+            function (ev) {
+              longPressFired = false;
+              if (ev.touches.length !== 1) return;
+              longPressStart = { x: ev.touches[0].clientX, y: ev.touches[0].clientY };
+              clearLongPress();
+              longPressTimer = setTimeout(function () {
+                longPressTimer = null;
+                longPressFired = true;
+                openActionSheet(entryId);
+                if (navigator.vibrate) navigator.vibrate(12);
+              }, 520);
+            },
+            { passive: true }
+          );
+          openBtn.addEventListener('touchmove', function (ev) {
+            if (!longPressStart || !longPressTimer) return;
+            const x = ev.touches[0].clientX;
+            const y = ev.touches[0].clientY;
+            if (Math.abs(x - longPressStart.x) > 12 || Math.abs(y - longPressStart.y) > 12) clearLongPress();
+          });
+          openBtn.addEventListener('touchend', function () {
+            clearLongPress();
+          });
+          openBtn.addEventListener('touchcancel', clearLongPress);
+          openBtn.addEventListener('contextmenu', function (ev) {
+            ev.preventDefault();
+            openActionSheet(entryId);
+          });
+        }
+
+        function openActionSheet(entryId) {
+          actionSheetEntryId = entryId;
+          actionSheetBackdrop.classList.remove('hidden');
+          actionSheet.classList.remove('hidden');
+          requestAnimationFrame(function () {
+            actionSheet.classList.remove('translate-y-full');
+          });
+        }
+
+        function closeActionSheet() {
+          actionSheet.classList.add('translate-y-full');
+          setTimeout(function () {
+            actionSheet.classList.add('hidden');
+            actionSheetBackdrop.classList.add('hidden');
+            actionSheetEntryId = null;
+          }, 280);
+        }
+
+        function deleteEntryById(id) {
+          const entries = loadEntries().filter(function (x) {
+            return x.id !== id;
+          });
+          saveEntries(entries);
+          renderList();
+          renderStats();
+          closeActionSheet();
+        }
+
+        function renderList() {
+          const all = sortedEntries(loadEntries());
+          const entries = filterBySearch(all);
+          entryList.innerHTML = '';
+          emptySearchHint.classList.add('hidden');
+
+          if (all.length === 0) {
+            emptyHint.classList.remove('hidden');
+            emptySearchHint.classList.add('hidden');
+            return;
+          }
+          emptyHint.classList.add('hidden');
+
+          if (entries.length === 0) {
+            emptySearchHint.classList.remove('hidden');
+            return;
+          }
+
+          entries.forEach(function (e) {
+            const title = (e.title || '').trim() || '无标题';
+            const mood = (e.mood || '').trim();
+            const li = document.createElement('li');
+            li.className = 'list-none';
+            li.dataset.id = e.id;
+            li.innerHTML =
+              '<div class="relative overflow-hidden rounded-card">' +
+              '<div class="absolute inset-y-0 right-0 z-0 flex w-20">' +
+              '<button type="button" class="swipe-delete-btn flex h-full w-full items-center justify-center bg-red-500 text-[15px] font-semibold text-white active:bg-red-600">删除</button>' +
+              '</div>' +
+              '<div class="swipe-front relative z-10 rounded-card th-card-flat transition-transform duration-200 ease-out border shadow-sm" style="transform:translateX(0);border-color:var(--c-ring)" data-open="0">' +
+              '<button type="button" class="entry-open w-full text-left p-4 th-row-active transition-colors" data-id="' +
+              escapeHtml(e.id) +
+              '">' +
+              '<div class="flex items-start justify-between gap-3">' +
+              '<div class="min-w-0 flex-1 flex gap-2">' +
+              (e.imageData
+                ? '<span class="entry-thumb shrink-0 inline-block h-14 w-14 overflow-hidden rounded-lg border th-card-flat" style="border-color:var(--c-ring)" aria-hidden="true"></span>'
+                : '') +
+              (mood
+                ? '<span class="text-xl shrink-0 leading-none pt-0.5" aria-hidden="true">' +
+                  escapeHtml(mood) +
+                  '</span>'
+                : '') +
+              '<div class="min-w-0 flex-1">' +
+              '<p class="text-[17px] font-semibold th-text truncate">' +
+              escapeHtml(title) +
+              '</p>' +
+              '<p class="text-[15px] th-muted mt-1 line-clamp-2">' +
+              escapeHtml(previewText(e.body, 120)) +
+              '</p>' +
+              '</div></div>' +
+              '<span class="text-[12px] th-muted2 shrink-0 pt-0.5 whitespace-nowrap">' +
+              escapeHtml(formatListDate(e.updatedAt || e.createdAt)) +
+              '</span>' +
+              '</div></button></div></div>';
+
+            const front = li.querySelector('.swipe-front');
+            const delBtn = li.querySelector('.swipe-delete-btn');
+            const openBtn = li.querySelector('.entry-open');
+            attachSwipe(li, /** @type {HTMLElement} */ (front), /** @type {HTMLElement} */ (delBtn), e.id);
+            bindLongPress(/** @type {HTMLElement} */ (openBtn), e.id);
+            openBtn.addEventListener('click', function () {
+              if (longPressFired) {
+                longPressFired = false;
+                return;
+              }
+              const txPx = parseTranslateX(front.style.transform);
+              if (txPx < -20) {
+                front.style.transform = 'translateX(0)';
+                front.dataset.open = '0';
+                openSwipeEl = null;
+                return;
+              }
+              closeAllSwipes();
+              openCompose(e.id);
+            });
+            if (e.imageData) {
+              var th = li.querySelector('.entry-thumb');
+              if (th) {
+                var lim = document.createElement('img');
+                lim.src = e.imageData;
+                lim.alt = '';
+                lim.className = 'h-full w-full object-cover';
+                lim.loading = 'lazy';
+                th.appendChild(lim);
+              }
+            }
+            entryList.appendChild(li);
+          });
+        }
+
+        function renderStats() {
+          const entries = loadEntries();
+          const now = new Date();
+          const y = now.getFullYear();
+          const m = now.getMonth();
+          let monthCount = 0;
+          entries.forEach(function (e) {
+            const d = new Date(e.updatedAt || e.createdAt);
+            if (!Number.isNaN(d.getTime()) && d.getFullYear() === y && d.getMonth() === m) monthCount++;
+          });
+          document.getElementById('statTotal').textContent = String(entries.length);
+          document.getElementById('statMonth').textContent = String(monthCount);
+
+          const moodMap = {};
+          entries.forEach(function (e) {
+            const mo = (e.mood || '').trim();
+            if (mo) moodMap[mo] = (moodMap[mo] || 0) + 1;
+          });
+          const wrap = document.getElementById('statMoods');
+          const emptyM = document.getElementById('statMoodsEmpty');
+          wrap.innerHTML = '';
+          const keys = Object.keys(moodMap).sort(function (a, b) {
+            return moodMap[b] - moodMap[a];
+          });
+          if (keys.length === 0) {
+            emptyM.classList.remove('hidden');
+          } else {
+            emptyM.classList.add('hidden');
+            keys.forEach(function (emoji) {
+              const pill = document.createElement('span');
+              pill.className = 'inline-flex items-center gap-1.5 rounded-full th-pill px-3 py-1.5 text-[15px]';
+              const em = document.createElement('span');
+              em.className = 'text-lg leading-none';
+              em.textContent = emoji;
+              const cnt = document.createElement('span');
+              cnt.className = 'th-pill-sub';
+              cnt.textContent = String(moodMap[emoji]);
+              pill.appendChild(em);
+              pill.appendChild(cnt);
+              wrap.appendChild(pill);
+            });
+          }
+        }
+
+        function buildMoodPicker() {
+          moodPicker.innerHTML = '';
+          const none = document.createElement('button');
+          none.type = 'button';
+          none.dataset.mood = '';
+          none.className =
+            'mood-chip shrink-0 rounded-full border border-[color:var(--c-ring)] px-3 py-2 text-[13px] font-medium th-muted th-card-flat data-[on=1]:border-[var(--c-accent)] data-[on=1]:bg-[var(--c-pill)] data-[on=1]:text-[var(--c-accent)]';
+          none.textContent = '无';
+          none.dataset.on = selectedMood === '' ? '1' : '0';
+          none.addEventListener('click', function () {
+            selectedMood = '';
+            syncMoodChips();
+          });
+          moodPicker.appendChild(none);
+
+          MOODS.forEach(function (emo) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.dataset.mood = emo;
+            b.setAttribute('aria-label', '心情 ' + emo);
+            b.className =
+              'mood-chip shrink-0 flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--c-ring)] text-2xl th-card-flat data-[on=1]:border-[var(--c-accent)] data-[on=1]:ring-2 data-[on=1]:ring-[var(--c-accent)] data-[on=1]:ring-opacity-30';
+            b.textContent = emo;
+            b.dataset.on = selectedMood === emo ? '1' : '0';
+            b.addEventListener('click', function () {
+              selectedMood = selectedMood === emo ? '' : emo;
+              syncMoodChips();
+            });
+            moodPicker.appendChild(b);
+          });
+        }
+
+        function syncMoodChips() {
+          moodPicker.querySelectorAll('.mood-chip').forEach(function (el) {
+            /** @type {HTMLElement} */ (el).dataset.on =
+              /** @type {HTMLElement} */ (el).dataset.mood === selectedMood ? '1' : '0';
+          });
+        }
+
+        function applyVisualViewport() {
+          const vv = window.visualViewport;
+          if (!vv) {
+            viewCompose.classList.remove('compose-vv');
+            viewCompose.style.removeProperty('--vv-top');
+            viewCompose.style.removeProperty('--vv-h');
+            return;
+          }
+          if (viewCompose.classList.contains('hidden')) return;
+          viewCompose.classList.add('compose-vv');
+          viewCompose.style.setProperty('--vv-top', vv.offsetTop + 'px');
+          viewCompose.style.setProperty('--vv-h', vv.height + 'px');
+        }
+
+        function bindVisualViewport() {
+          const vv = window.visualViewport;
+          if (!vv) return;
+          vv.addEventListener('resize', applyVisualViewport);
+          vv.addEventListener('scroll', applyVisualViewport);
+        }
+
+        function openCompose(id) {
+          editingId = id || null;
+          const now = new Date().toISOString();
+          if (id) {
+            const entries = loadEntries();
+            const e = entries.find(function (x) {
+              return x.id === id;
+            });
+            if (!e) return;
+            titleField.value = e.title || '';
+            bodyField.value = e.body || '';
+            selectedMood = (e.mood || '').trim();
+            draftImageData = e.imageData || '';
+            syncComposeImageUi();
+            draftCreatedAt = e.createdAt;
+            const displayTime = e.updatedAt || e.createdAt;
+            composeMetaTime.textContent = '上次保存 · ' + formatComposeTime(displayTime);
+            composeTimeLabel.textContent = formatComposeTime(displayTime);
+          } else {
+            titleField.value = '';
+            bodyField.value = '';
+            selectedMood = '';
+            draftImageData = '';
+            imageFileInput.value = '';
+            syncComposeImageUi();
+            draftCreatedAt = now;
+            composeMetaTime.textContent = '创建于 · ' + formatComposeTime(now);
+            composeTimeLabel.textContent = formatComposeTime(now);
+          }
+          buildMoodPicker();
+          syncMoodChips();
+          viewCompose.classList.remove('hidden');
+          viewCompose.setAttribute('aria-hidden', 'false');
+          applyVisualViewport();
+          requestAnimationFrame(function () {
+            titleField.focus();
+            applyVisualViewport();
+          });
+        }
+
+        function closeCompose() {
+          viewCompose.classList.add('hidden');
+          viewCompose.classList.remove('compose-vv');
+          viewCompose.style.removeProperty('--vv-top');
+          viewCompose.style.removeProperty('--vv-h');
+          viewCompose.setAttribute('aria-hidden', 'true');
+          editingId = null;
+          draftImageData = '';
+          imageFileInput.value = '';
+          syncComposeImageUi();
+        }
+
+        function saveCompose() {
+          const title = titleField.value.trim();
+          const body = bodyField.value;
+          const mood = (selectedMood || '').trim();
+          const imgSave = sanitizeImageData(draftImageData);
+          const now = new Date().toISOString();
+          let entries = loadEntries();
+
+          if (!title && !body.trim() && !mood && !imgSave) {
+            if (editingId) {
+              entries = entries.filter(function (x) {
+                return x.id !== editingId;
+              });
+              try {
+                saveEntries(entries);
+              } catch (err) {
+                return;
+              }
+            }
+            closeCompose();
+            renderList();
+            renderStats();
+            return;
+          }
+
+          if (editingId) {
+            const idx = entries.findIndex(function (x) {
+              return x.id === editingId;
+            });
+            if (idx === -1) {
+              closeCompose();
+              return;
+            }
+            entries[idx] = {
+              ...entries[idx],
+              title: title,
+              body: body,
+              mood: mood,
+              imageData: imgSave,
+              updatedAt: now,
+            };
+          } else {
+            entries.push({
+              id: newId(),
+              title: title,
+              body: body,
+              mood: mood,
+              imageData: imgSave,
+              createdAt: draftCreatedAt || now,
+              updatedAt: now,
+            });
+          }
+          try {
+            saveEntries(entries);
+          } catch (err) {
+            return;
+          }
+          closeCompose();
+          renderList();
+          renderStats();
+        }
+
+        /** Tab */
+        const tabPanels = {
+          journal: document.getElementById('tabJournal'),
+          stats: document.getElementById('tabStats'),
+          settings: document.getElementById('tabSettings'),
+        };
+        const tabBtns = document.querySelectorAll('.tab-btn');
+
+        const btnNew = document.getElementById('btnNew');
+
+        function setTab(name) {
+          Object.keys(tabPanels).forEach(function (key) {
+            tabPanels[key].classList.toggle('hidden', key !== name);
+          });
+          tabBtns.forEach(function (btn) {
+            const on = btn.getAttribute('data-tab') === name;
+            btn.classList.toggle('tab-active', on);
+            btn.classList.toggle('tab-inactive', !on);
+            btn.setAttribute('aria-current', on ? 'page' : 'false');
+          });
+          btnNew.classList.toggle('hidden', name !== 'journal');
+          if (name === 'stats') renderStats();
+        }
+
+        tabBtns.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const t = btn.getAttribute('data-tab');
+            if (t) setTab(t);
+          });
+        });
+
+        searchField.addEventListener('input', function () {
+          searchQuery = searchField.value;
+          btnClearSearch.classList.toggle('hidden', !searchQuery);
+          renderList();
+        });
+        btnClearSearch.addEventListener('click', function () {
+          searchField.value = '';
+          searchQuery = '';
+          btnClearSearch.classList.add('hidden');
+          renderList();
+          searchField.focus();
+        });
+
+        actionSheetCancel.addEventListener('click', closeActionSheet);
+        actionSheetBackdrop.addEventListener('click', closeActionSheet);
+        actionSheetDelete.addEventListener('click', function () {
+          if (actionSheetEntryId) deleteEntryById(actionSheetEntryId);
+        });
+
+        btnNew.addEventListener('click', function () {
+          closeAllSwipes();
+          openCompose(null);
+        });
+        document.getElementById('btnCloseCompose').addEventListener('click', closeCompose);
+        document.getElementById('btnSaveCompose').addEventListener('click', saveCompose);
+
+        btnPickImage.addEventListener('click', function () {
+          imageFileInput.click();
+        });
+        imageFileInput.addEventListener('change', function () {
+          var f = imageFileInput.files && imageFileInput.files[0];
+          if (!f) return;
+          compressImageToDataUrl(
+            f,
+            function (dataUrl) {
+              draftImageData = dataUrl;
+              syncComposeImageUi();
+              imageFileInput.value = '';
+            },
+            function (err) {
+              alert(err);
+              imageFileInput.value = '';
+            }
+          );
+        });
+        btnRemoveImage.addEventListener('click', function () {
+          draftImageData = '';
+          imageFileInput.value = '';
+          syncComposeImageUi();
+        });
+
+        btnPinEnable.addEventListener('click', function () {
+          showLockOverlay('setup');
+        });
+        btnPinChange.addEventListener('click', function () {
+          showLockOverlay('change_old');
+        });
+        btnPinDisable.addEventListener('click', function () {
+          showLockOverlay('disable');
+        });
+        lockBtnCancel.addEventListener('click', function () {
+          hideLockOverlay();
+        });
+        lockBtnReset.addEventListener('click', function () {
+          if (
+            !confirm(
+              '将删除本设备上所有日记、配图与隐私锁密码，且无法恢复。确定继续？'
+            )
+          )
+            return;
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(STORAGE_PREFS);
+          clearPinStorage();
+          sessionUnlocked = true;
+          hideLockOverlay();
+          updatePinSettingsUi();
+          buildSchemePicker();
+          applyAppearance();
+          renderList();
+          renderStats();
+        });
+
+        document.getElementById('btnClearAll').addEventListener('click', function () {
+          if (!confirm('确定清空所有日记？此操作不可恢复。')) return;
+          localStorage.removeItem(STORAGE_KEY);
+          renderList();
+          renderStats();
+        });
+
+        document.addEventListener('click', function (e) {
+          const t = /** @type {HTMLElement} */ (e.target);
+          if (!t.closest('.swipe-front') && !t.closest('.swipe-delete-btn')) closeAllSwipes();
+        });
+
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('./service-worker.js', { scope: './' }).catch(function () {});
+          });
+        }
+
+        bindVisualViewport();
+        window.addEventListener('orientationchange', function () {
+          setTimeout(applyVisualViewport, 200);
+        });
+
+        var heroFileInput = document.getElementById('heroFileInput');
+        var inputAppName = document.getElementById('inputAppName');
+        var selectTitleFont = document.getElementById('selectTitleFont');
+        var rangeHeroOpacity = document.getElementById('rangeHeroOpacity');
+        var rangeHeroScale = document.getElementById('rangeHeroScale');
+        var heroOpacityLabel = document.getElementById('heroOpacityLabel');
+        var heroScaleLabel = document.getElementById('heroScaleLabel');
+        var appNameTimer = null;
+        if (inputAppName) {
+          inputAppName.addEventListener('input', function () {
+            clearTimeout(appNameTimer);
+            appNameTimer = setTimeout(function () {
+              savePrefs({ appName: inputAppName.value.slice(0, 24) });
+            }, 400);
+          });
+        }
+        if (selectTitleFont) {
+          selectTitleFont.addEventListener('change', function () {
+            savePrefs({ titleFont: selectTitleFont.value });
+          });
+        }
+        document.querySelectorAll('.appearance-opt').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var ap = b.getAttribute('data-appearance');
+            if (ap) savePrefs({ appearance: ap });
+          });
+        });
+        if (rangeHeroOpacity && heroOpacityLabel) {
+          rangeHeroOpacity.addEventListener('input', function () {
+            heroOpacityLabel.textContent = rangeHeroOpacity.value + '%';
+          });
+          rangeHeroOpacity.addEventListener('change', function () {
+            savePrefs({ heroOpacity: Number(rangeHeroOpacity.value) / 100 });
+          });
+        }
+        if (rangeHeroScale && heroScaleLabel) {
+          rangeHeroScale.addEventListener('input', function () {
+            heroScaleLabel.textContent = rangeHeroScale.value + '%';
+          });
+          rangeHeroScale.addEventListener('change', function () {
+            savePrefs({ heroScale: Number(rangeHeroScale.value) / 100 });
+          });
+        }
+        var btnHeroPick = document.getElementById('btnHeroPick');
+        var btnHeroClear = document.getElementById('btnHeroClear');
+        if (btnHeroPick && heroFileInput) {
+          btnHeroPick.addEventListener('click', function () {
+            heroFileInput.click();
+          });
+        }
+        if (heroFileInput) {
+          heroFileInput.addEventListener('change', function () {
+            var f = heroFileInput.files && heroFileInput.files[0];
+            if (!f) return;
+            compressImageToDataUrl(
+              f,
+              function (url) {
+                if (url.length > 850000) {
+                  alert('压缩后图片仍较大，请换一张更简单或尺寸更小的图。');
+                  heroFileInput.value = '';
+                  return;
+                }
+                savePrefs({ heroBg: url });
+                heroFileInput.value = '';
+              },
+              function (err) {
+                alert(err);
+                heroFileInput.value = '';
+              },
+              HERO_IMG_MAX_W
+            );
+          });
+        }
+        if (btnHeroClear) {
+          btnHeroClear.addEventListener('click', function () {
+            savePrefs({ heroBg: '' });
+          });
+        }
+        if (window.matchMedia) {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+            if (loadPrefs().appearance === 'system') applyAppearance();
+          });
+        }
+
+        buildSchemePicker();
+        applyAppearance();
+        initLockOnBoot();
+        setTab('journal');
+        renderList();
+        renderStats();
+      })();
+    </script>
+  </body>
+</html>
